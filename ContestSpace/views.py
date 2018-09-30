@@ -46,7 +46,7 @@ def access(request):
 		'content-Type': 'application/json',
 	}
 	data = '{"grant_type": "authorization_code","code": "' + request.session["auth_code"] + \
-		'","client_id":"102caff0257f6de65af72cdb6aab8126","client_secret":"e4179e7cf1e94d8bc782e114ba91e9d7",' \
+		'",' \
 		'"redirect_uri":"http://149.129.139.177:8000/ContestSpace/"}'
 	response = requests.post('https://api.codechef.com/oauth/token', headers=headers, data=data)
 	json_data = response.json()
@@ -89,8 +89,6 @@ def refresh(request):
 	data = [
 		('grant_type', 'refresh_token'),
 		('refresh_token', request.session["refresh_token"]),
-		('client_id', '102caff0257f6de65af72cdb6aab8126'),
-		('client_secret', 'e4179e7cf1e94d8bc782e114ba91e9d7'),
 	]	
 	response = requests.post('https://api.codechef.com/oauth/token', data=data)
 	json_data = response.json()
