@@ -22,13 +22,19 @@
           float: right;
           top:  50%; ">
     
-            <ul class="nav navbar-nav" style="margin-top: -12px;">
-                <li class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" href="#">Active Contests <span class="caret"></span></a>
-                  <ul class="dropdown-menu">
-                   
-                  </ul>
-                </li>
-            </ul>
+          <ul class="nav navbar-nav" style="margin-top: -12px;">
+            <li class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" href="#">Active Contests <span class="caret"></span></a>
+              <ul class="dropdown-menu">
+               {% if content %}
+                 {% for contest in content %}
+                  <li> <a href="{% url 'problems' contest.ContestCode contest.pk %}"> {{contest.name}} </li>
+                 {% endfor %}
+                 {% else %}
+                   <p>There are no contests.</p>
+                 {% endif %}
+              </ul>
+            </li>
+        </ul>
             <a style="padding: 10px;" href="{% url 'manageteams' %}">Manage Team</a>
             <a style="padding: 10px;" href="{% url 'contests' 'list' %}">Past Contests</a>
           </div>
