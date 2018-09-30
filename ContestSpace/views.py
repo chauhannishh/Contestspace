@@ -47,14 +47,13 @@ def access(request):
 	}
 	data = '{"grant_type": "authorization_code","code": "' + request.session["auth_code"] + \
 		'","client_id":"102caff0257f6de65af72cdb6aab8126","client_secret":"e4179e7cf1e94d8bc782e114ba91e9d7",' \
-		'"redirect_uri":"http://127.0.0.1:8000/ContestSpace/"}'
+		'"redirect_uri":"http://149.129.139.177:8000/ContestSpace/"}'
 	response = requests.post('https://api.codechef.com/oauth/token', headers=headers, data=data)
 	json_data = response.json()
 	request.session["access_token"] = json_data["result"]["data"]["access_token"]
 	request.session["refresh_token"] = json_data["result"]["data"]["refresh_token"]
 	now = datetime.now()
 	now = str(now)
-	#now = now.strftime('%Y-%m-%d %H:%M')
 	request.session["time"] = now
 	headers = {
 		'Accept': 'application/json',
@@ -99,7 +98,6 @@ def refresh(request):
 	request.session["refresh_token"] = json_data["result"]["data"]["refresh_token"]
 	now = datetime.now()
 	now = str(now)
-	#now = now.strftime('%Y-%m-%d %H:%M')
 	request.session["time"] = now
 	return index(request)
 
@@ -136,28 +134,25 @@ def createteamform(request):
 		now = datetime.strptime(now, '%Y-%m-%d %H:%M:%S.%f')
 		if datetime.now() - now > timedelta(seconds=55*60):
 			refresh(request)
-    # if this is a POST request we need to process the form data
+
 	if request.method == 'POST':
-        # create a form instance and populate it with data from the request:
-        # check whether it's valid:
 		form = CreateteamForm(request.POST)
 		if form.is_valid():
 			teamname = form.cleaned_data['teamname']
 			unique_id = get_random_string(length=32)
 			b = Team(teamname = teamname, teamid = unique_id, user1 = request.session['username'])
 			b.save()
-			member2 = form.cleaned_data['username2'] #NULL h to????/
+			member2 = form.cleaned_data['username2']
 			member3 = form.cleaned_data['username3']
 			a = pendingrequests(userp = member2, teamname = teamname,  teamidp = unique_id)
 			a.save()
 			a = pendingrequests(userp = member3, teamname = teamname, teamidp = unique_id)
 			a.save()
 			return HttpResponseRedirect(reverse('manageteams') )
-	# if a GET (or any other method) we'll create a blank form
 	else:
 		form = CreateteamForm()
-
 	return render(request, 'ContestSpace/forms.html', {'form': form, 'user_name':request.session.get('username', '123')})
+
 def startcontest(request, temp):
 	if "username" not in request.session or request.session.get("username", '123') == "123":
 		return render(request, '404.html')
@@ -419,6 +414,4 @@ def showresult(request, temp, id):
 			i.penalty = i.penalty - 1
 	context["totalscore"] = totalscore
 	context["totaltime"] = totaltime - timedelta(microseconds=(totaltime).microseconds)
-	return render(request, 'ContestSpace/result.html', context = context)	
-
-
+	return render(request, 'ContestSpace/result.html', context = context)
